@@ -1,5 +1,6 @@
 const { createConnection } = require('net');
 const { createInterface } = require('readline');
+const crypto = require('crypto');
 
 const client = createConnection({ port: 5000 });
 const rl = createInterface({
@@ -13,9 +14,9 @@ client.on('connect', () => {
 
 client.setEncoding('utf8');
 
+client.pipe(crypto.createCipher('aes192', 'a_shared_secret'));
+
 client.pipe(process.stdout);
-
-
 
 client.on('end', () => {
   console.log('disconnected from server');
