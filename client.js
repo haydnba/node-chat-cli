@@ -1,28 +1,40 @@
 const { createConnection } = require('net');
 const { createInterface } = require('readline');
-const crypto = require('crypto');
+const { createCipher, createDecipher } = require('crypto');
 
 const client = createConnection({ port: 5000 });
-const rl = createInterface({
-  input: process.stdin,
-  // output: process.stdout
-});
+const rl = createInterface({ input: process.stdin });
 
-client.on('connect', () => {
-  console.log('connected to server');
-});
+client
+  .on('connect', () => {
+    console.log('connected to server');
+  })
+  .on('data', data => {
+    if (data.toString().indexOf('§') == 0) {
+      process.stdout.write(data);
+    } else {
+      const message = decrypt('password', data.toString('utf8'));
+      process.stdout.write(message);
+    }
+  })
+  .on('end', () => {
+    console.log('disconnected from server');
+  })
 
-client.setEncoding('utf8');
+rl
+  .on('line', line => {
+    client.write(encrypt('password', line));
+    rl.prompt(true);
+  })
 
-client.pipe(crypto.createCipher('aes192', 'a_shared_secret'));
+const encrypt = function(secret, message) {
+  const cipher = createCipher('aes192', secret);
+  let encrypted = cipher.update(message, 'utf8', 'hex');
+  return encrypted += cipher.final('hex');
+}
 
-client.pipe(process.stdout);
-
-client.on('end', () => {
-  console.log('disconnected from server');
-});
-
-rl.on('line', line => {
-  client.write(`${line}\n`);
-  rl.prompt(true);
-})
+const decrypt = function(secret, message) {
+  const decipher = createDecipher('aes192', secret);
+  let decrypted = decipher.update(message, 'hex', 'utf8');
+  return decrypted += decipher.final('utf8');
+}
