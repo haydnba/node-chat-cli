@@ -13,7 +13,7 @@ const rl = createInterface({ input: process.stdin });
 
 client
   .on('connect', () => {
-    console.log('connected to server');
+    console.log('connected to chat §erver');
     client.write(`@${username}:${secret}`);
   })
   .on('data', data => {
@@ -31,14 +31,12 @@ client
     }
   })
   .on('end', () => {
-    process.stdout.write('disconnected from §');
+    process.stdout.write('§ disconnected from §');
   })
 
-rl
-  .on('line', line => {
-    client.write(encrypt(secret, `@${username}: ${line}`));
-    rl.prompt(true);
-  })
+rl.on('line', line => {
+  client.write(encrypt(secret, `@${username}: ${line}`));
+});
 
 const encrypt = function(secret, message) {
   const cipher = createCipher('aes192', secret);

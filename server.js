@@ -7,34 +7,30 @@ const sockets = {};
 
 server
   .on('connection', socket => {
-    socket.setEncoding('utf8');
     socket.id = counter++;
-    
+    console.log({ socket });
     socket
+      .setEncoding('utf8')
       .on('data', data => {
         if (!sockets[socket.id]) {
-          console.log(data);
           [ socket.name, socket.secret ] = data.toString().split(':');
           socket.time = new Date().getTime();
-          socket.write(`§ welcome ${socket.name} (${socket.time})`);
           sockets[socket.id] = socket;
+          socket.write(`§ welcome ${socket.name}/${socket.time}`);
+          console.log(`${socket.name}/${socket.time} connected`);
           return;
         }
-        Object.entries(sockets).forEach(([key, cs]) => {
-          if(socket.id != key) {
-            console.log(data);
-            cs.write(data);
-          }
+        Object.entries(sockets).forEach(([key, client]) => {
+          if (socket.id != key) client.write(data);
         });
       })
       .on('end', _data => {
         delete sockets[socket.id];
-        Object.entries(sockets).forEach(([_key, cs]) => {
-          cs.write(`${socket.name}: has disconnected`);
-        });    
+        Object.entries(sockets).forEach(([_key, client]) => {
+          client.write(`§ ${socket.name}: has disconnected`);
+        });
         console.log(`${socket.name}/${socket.time} disconnected`);
       });
-
   })
   .on('error', (err) => {
     console.log(err);
