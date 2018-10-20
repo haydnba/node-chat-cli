@@ -1,13 +1,7 @@
 const { createConnection } = require('net');
 const { createInterface } = require('readline');
-const { createCipher, createDecipher } = require('crypto');
-
-console.log(process.argv);
-
-const username = process.argv[2];
-const secret = process.argv[3];
-const port = process.argv[4];
-
+const { encrypt, decrypt } = require('./crypt.js');
+const [ x, y, username, secret, port ] = process.argv;
 const client = createConnection({ port: port });
 const rl = createInterface({ input: process.stdin });
 
@@ -31,21 +25,9 @@ client
     }
   })
   .on('end', () => {
-    process.stdout.write('§ disconnected from §');
+    process.stdout.write('§ disconnected from server');
   })
 
 rl.on('line', line => {
   client.write(encrypt(secret, `@${username}: ${line}`));
 });
-
-const encrypt = function(secret, message) {
-  const cipher = createCipher('aes192', secret);
-  let encrypted = cipher.update(message, 'utf8', 'hex');
-  return encrypted += cipher.final('hex');
-}
-
-const decrypt = function(secret, message) {
-  const decipher = createDecipher('aes192', secret);
-  let decrypted = decipher.update(message, 'hex', 'utf8');
-  return decrypted += decipher.final('utf8');
-}

@@ -8,7 +8,6 @@ const sockets = {};
 server
   .on('connection', socket => {
     socket.id = counter++;
-    console.log({ socket });
     socket
       .setEncoding('utf8')
       .on('data', data => {
