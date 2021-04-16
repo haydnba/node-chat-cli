@@ -4,7 +4,7 @@ const { createCipheriv, createDecipheriv, scrypt } = require('crypto')
 const ALGORITHM = 'aes-192-cbc'
 
 /**
- * Generate a cipher key from secret.
+ * Generate cipher key from secret.
  * 
  * @param {string} secret 
  * @returns {Promise<string>}
@@ -26,7 +26,7 @@ const keyGen = secret => new Promise(resolve => {
  */
 const enc = async (secret, message) => {
   // generate key and initialization vector
-  const key = await keyGen(secret).catch(null)
+  const key = await keyGen(secret).catch(null) // TODO:
   const iv = Buffer.alloc(16, 0)
 
   // Construct the cipher
@@ -48,7 +48,7 @@ const enc = async (secret, message) => {
  */
  const dec = async (secret, message) => {
   // generate key and initialization vector
-  const key = await keyGen(secret).catch(null)
+  const key = await keyGen(secret).catch(null) // TODO:
   const iv = Buffer.alloc(16, 0)
 
   // Construct the decipherment
@@ -61,7 +61,4 @@ const enc = async (secret, message) => {
   return result
 }
 
-module.exports = {
-  enc,
-  dec
-}
+module.exports = { enc, dec }
