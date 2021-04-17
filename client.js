@@ -1,7 +1,7 @@
 const { createConnection } = require('net')
 const { createInterface } = require('readline')
 
-const [ _x, _y, username, secret, port ] = process.argv
+const [ username, secret, port ] = process.argv.splice(2)
 
 const client = createConnection({ port })
 const rl = createInterface({ input: process.stdin })

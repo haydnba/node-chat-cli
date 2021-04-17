@@ -6,7 +6,7 @@ module.exports = (username, secret, client) => ({
    * TODO:
    * @returns 
    */
-  connection: () => client.write(`@${username}:${secret}`),
+  connection: () => client.write(JSON.stringify({ username, ts: Date.now() })),
 
   /**
    * TODO:
@@ -19,7 +19,13 @@ module.exports = (username, secret, client) => ({
    * @param {*} line 
    * @returns 
    */
-  input: async line => client.write(await enc(secret, `@${username}: ${line}`)),
+  input: async line => {
+    const message = JSON.stringify({
+      username, line, ts: Date.now()
+    })
+
+    client.write(await enc(secret, message))
+  },
   
   /**
    * TODO:
@@ -27,13 +33,17 @@ module.exports = (username, secret, client) => ({
    * @returns 
    */
   message: async data => {
-    if (data.toString().indexOf('§') == 0) {
-      return process.stdout.write(`${data}\n`)
+    if (data.toString().startsWith('§')) {
+      return process.stdout.write(`[${data}]\n`)
     }
   
     try {
       const message = await dec(secret, data.toString('utf8'))
-      process.stdout.write(`${message}\n`)
+      const { username, line, ts } = JSON.parse(message)
+
+      process.stdout.write(
+        `[${username} - ${new Date(ts).toLocaleTimeString()}]: ${line}\n`
+      )
     } catch (e) {
       process.stdout.write(`${data}\n`)
     }
