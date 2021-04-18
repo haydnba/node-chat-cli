@@ -1,17 +1,31 @@
-module.exports = (counter, store) => (socket) => {
+const broadcast = (data, store, id = undefined) => {
+  for (const [ key, client ] of Object.entries(store)) {
+    if (id && id === key) return
+    
+    client.write(data)
+  }
+}
 
+const register = (data, socket, store) => {
+  const message = JSON.parse(data.toString())
+  const { username, ts } = message
+
+  socket.time = ts
+  socket.name = username
+  store[socket.id] = socket
+}
+
+module.exports = (registry) => (socket) => {
+
+  const { counter, sockets: store } = registry
+  
   socket.id = ++counter
 
   socket
     .setEncoding('utf8')
     .on('data', data => {
       if (!store[socket.id]) {
-        const message = JSON.parse(data.toString())
-        const { username, ts } = message
-
-        socket.time = ts
-        socket.name = username
-        store[socket.id] = socket
+        register(data, socket, store)
 
         socket.write(`§ connected - ${new Date(ts).toLocaleTimeString()}`)
         console.log(`@${username} connected - ${ts}`)
@@ -19,16 +33,12 @@ module.exports = (counter, store) => (socket) => {
         return
       }
 
-      Object.entries(store).forEach(([key, client]) => {
-        if (socket.id != key) client.write(data)
-      })
+      broadcast(data, socket.id, store)
     })
     .on('end', _data => {
       delete store[socket.id]
 
-      Object.entries(store).forEach(([_key, client]) => {
-        client.write(`§ ${socket.name}: has disconnected`)
-      })
+      broadcast(`§ ${socket.name}: has disconnected`, store)
 
       console.log(`${socket.name}/${socket.time} disconnected`)
     })
