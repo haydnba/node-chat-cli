@@ -5,11 +5,11 @@ const ALGORITHM = 'aes-192-cbc'
 
 /**
  * Generate cipher key from secret.
- * 
- * @param {string} secret 
+ *
+ * @param {string} secret
  * @returns {Promise<string>}
  */
-const keyGen = secret => new Promise(resolve => {
+const key = async secret => new Promise(resolve => {
   scrypt(secret, 'salt', 24, (err, key) => {
     if (err) throw err
 
@@ -19,18 +19,14 @@ const keyGen = secret => new Promise(resolve => {
 
 /**
  * Encrypt a message using the AES cipher and a shared secret.
- * 
- * @param {string} secret 
- * @param {string} message 
+ *
+ * @param {string} key
+ * @param {string} message
  * @returns {string}
  */
-const enc = async (secret, message) => {
-  // generate key and initialization vector
-  const key = await keyGen(secret).catch(null) // TODO:
-  const iv = Buffer.alloc(16, 0)
-
+const enc = (key, message) => {
   // Construct the cipher
-  const cipher = createCipheriv(ALGORITHM, key, iv)
+  const cipher = createCipheriv(ALGORITHM, key, Buffer.alloc(16, 0))
 
   // Encrypt and return the message
   let result = cipher.update(message, 'utf8', 'hex')
@@ -41,18 +37,14 @@ const enc = async (secret, message) => {
 
 /**
  * Decrypt a message using the AES cipher and a shared secret.
- * 
- * @param {string} secret 
- * @param {string} message 
+ *
+ * @param {string} key
+ * @param {string} message
  * @returns {string}
  */
- const dec = async (secret, message) => {
-  // generate key and initialization vector
-  const key = await keyGen(secret).catch(null) // TODO:
-  const iv = Buffer.alloc(16, 0)
-
-  // Construct the decipherment
-  const decipher = createDecipheriv(ALGORITHM, key, iv)
+ const dec = (key, message) => {
+  // Construct the decipher
+  const decipher = createDecipheriv(ALGORITHM, key, Buffer.alloc(16, 0))
 
   // Decrypt and return the message
   let result = decipher.update(message, 'hex', 'utf8')
@@ -61,4 +53,4 @@ const enc = async (secret, message) => {
   return result
 }
 
-module.exports = { enc, dec }
+module.exports = { enc, dec, key }
