@@ -10,7 +10,7 @@ module.exports = (
   /**
    * Derive the secret key and ping the server.
    */
-  connection: async () => {
+  connection: async function () {
     try {
       derivedKey = await key(secret)
 
@@ -23,7 +23,9 @@ module.exports = (
   /**
    * Output a disconnection message.
    */
-  disconnect: () => process.stdout.write('disconnected from server'),
+  disconnect: function () {
+    process.stdout.write('disconnected from server')
+  },
 
   /**
    * Serialise, encrypt and dispatch the client input.
@@ -31,7 +33,7 @@ module.exports = (
    * @param {*} line
    * @returns
    */
-  input: line => {
+  input: function (line) {
     try {
       const message = JSON.stringify({
         username, line, ts: Date.now()
@@ -49,7 +51,7 @@ module.exports = (
    * @param {*} data
    * @returns
    */
-  message: data => {
+  message: function (data) {
     try {
       const message = dec(derivedKey, data.toString('utf8'))
       const { username, line, ts } = JSON.parse(message)
