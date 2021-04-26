@@ -15,6 +15,7 @@
 - Run clients with `node src/client.js <your username> <your secret> <port>`
 
 #### Features:
-- messages are encrypted on the client and then broadcast
+- messages are encrypted on the client and then broadcast by server
 - messaged are decipherable only by a client registering the identical secret
 - messages are displayed only if deciperable
+- secure and highly inefficient 😁
