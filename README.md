@@ -10,12 +10,11 @@
 - `events` for event bus managing socket connections
 
 #### Usage:
-
-- Run server with `node src/server.mjs` (port defaults to 8000)
-- Run clients with `node src/client.mjs <your username> <your secret> <port>`
+- Serve with `node server/app.mjs` (port defaults to 8000)
+- Connect with `node client/app.mjs <your username> <your secret> <port>`
 
 #### Features:
-- messages are encrypted on the client and then broadcast by server
-- messaged are decipherable only by a client registering the identical secret
-- messages are displayed only if deciperable
+- messages encrypted on the client and broadcast by server
+- messaged decipherable only on a client registering the secret
+- messages displayed only if decipherable
 - secure and highly inefficient 😁
