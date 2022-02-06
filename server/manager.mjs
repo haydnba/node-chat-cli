@@ -1,9 +1,4 @@
-import EventEmitter from 'events';
-
-const bus = new EventEmitter();
-bus.setMaxListeners(Infinity);
-
-const socketManager = socket => {
+const socketManager = bus => socket => {
   // Initialisation flag
   let registered = false;
 
@@ -15,7 +10,7 @@ const socketManager = socket => {
   bus.on('message', broadcast);
 
   /**
-   * Relay the message to all registered sockets but sender.
+   * Relay the message to all registered sockets barring sender.
    *
    * @param {*} message
    * @param {*} sender
@@ -30,8 +25,7 @@ const socketManager = socket => {
    * @param {*} data
    */
   function dispatch (data) {
-    registered && bus.emit('message', data, socket);
-    registered = true;
+    registered ? bus.emit('message', data, socket) : registered = true;
   }
 
   /**

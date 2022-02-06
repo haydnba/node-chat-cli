@@ -1,7 +1,7 @@
-
 import { createCipheriv, createDecipheriv, scrypt } from 'crypto';
 
 const ALGORITHM = 'aes-192-cbc';
+const SALT = Buffer.alloc(16, 0);
 
 /**
  * Generate cipher key from secret.
@@ -10,7 +10,7 @@ const ALGORITHM = 'aes-192-cbc';
  * @returns {Promise<string>}
  */
 const key = async secret => new Promise(resolve => {
-  scrypt(secret, 'salt', 24, (err, key) => {
+  scrypt(secret, SALT, 24, (err, key) => {
     if (err) throw err;
 
     resolve(key);
