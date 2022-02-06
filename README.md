@@ -11,8 +11,8 @@
 
 #### Usage:
 
-- Run server with `node src/server.js` (port defaults to 5000)
-- Run clients with `node src/client.js <your username> <your secret> <port>`
+- Run server with `node src/server.mjs` (port defaults to 8000)
+- Run clients with `node src/client.mjs <your username> <your secret> <port>`
 
 #### Features:
 - messages are encrypted on the client and then broadcast by server
