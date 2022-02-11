@@ -1,30 +1,24 @@
 import { createCipheriv, createDecipheriv, scrypt } from 'crypto';
+import { Cipherer, KeyGen } from './types';
 
 const ALGORITHM = 'aes-192-cbc';
 const SALT = Buffer.alloc(16, 0);
 
 /**
  * Generate cipher key from secret.
- *
- * @param {string} secret
- * @returns {Promise<string>}
  */
-const key = async secret => new Promise(resolve => {
+const key: KeyGen = async (secret) => new Promise(resolve => {
   scrypt(secret, SALT, 24, (err, key) => {
     if (err) throw err;
 
     resolve(key);
   });
-})
+});
 
 /**
  * Encrypt a message using the AES cipher and a shared secret.
- *
- * @param {string} key
- * @param {string} message
- * @returns {string}
  */
-const enc = (key, message) => {
+const enc: Cipherer = (key, message) => {
   // Construct the cipher
   const cipher = createCipheriv(ALGORITHM, key, Buffer.alloc(16, 0));
 
@@ -33,16 +27,12 @@ const enc = (key, message) => {
   result += cipher.final('hex');
 
   return result;
-}
+};
 
 /**
  * Decrypt a message using the AES cipher and a shared secret.
- *
- * @param {string} key
- * @param {string} message
- * @returns {string}
  */
- const dec = (key, message) => {
+const dec: Cipherer = (key, message) => {
   // Construct the decipher
   const decipher = createDecipheriv(ALGORITHM, key, Buffer.alloc(16, 0));
 
@@ -51,6 +41,6 @@ const enc = (key, message) => {
   result += decipher.final('utf8');
 
   return result;
-}
+};
 
 export { enc, dec, key };
