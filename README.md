@@ -1,6 +1,6 @@
 ## Node Chat Cli
 
-### simple command line chat with encryption
+### simple command-line chat with encryption
 
 #### Libs:
 

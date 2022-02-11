@@ -2,19 +2,26 @@ import EventEmitter from 'events';
 import * as net from 'net';
 import { socketManager } from '.';
 
-function app (PORT = 8000): void {
+const { stderr, stdout } = process;
+
+/**
+ * TODO
+ * @param PORT
+ * @param limit
+ */
+function app (PORT = 8000, limit = Infinity): void {
 
   const server = net.createServer();
   const bus = new EventEmitter();
   const manager = socketManager(bus);
 
-  bus.setMaxListeners(Infinity);
+  bus.setMaxListeners(limit);
 
   server
     .on('connection', manager)
-    .on('error', console.error);
+    .on('error', (err) => stderr.write('error: ' + err.message + '\n'));
 
-  server.listen(PORT, () => console.info('server listening on', PORT));
+  server.listen(PORT, () => stdout.write('listening on port ' + PORT + '\n'));
 }
 
 export { app };

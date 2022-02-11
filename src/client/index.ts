@@ -1,3 +1,10 @@
+export { clientHandler } from './handler';
 export { enc, dec, key } from './utils';
-export { clientHandler } from './handler'
-export { app } from './app'
+export {
+  Cipherer,
+  KeyGen,
+  ClientConfig,
+  ClientHandler,
+  Message
+} from './types';
+export { app } from './app';

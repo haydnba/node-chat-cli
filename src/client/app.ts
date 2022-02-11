@@ -1,23 +1,39 @@
-import { createConnection } from 'net';
-import { createInterface } from 'readline';
+import assert from 'assert/strict';
+import * as net from 'net';
+import * as rl from 'readline';
 import { clientHandler } from '.';
 
-function app (name: string, secret: string, PORT = 8000): void {
-  // Invoke client, interface and handlers
+const { env: { USER_NAME, SECRET }, stdin } = process;
+
+/**
+ * TODO
+ * @param HOST
+ * @param PORT
+ */
+function app (HOST = 'localhost', PORT = 8000): void {
+
+  assert.strictEqual(typeof SECRET === 'string', true);
+  assert.strictEqual(typeof USER_NAME === 'string', true);
+
+  const input = { input: stdin };
+  const config = { username: USER_NAME, secret: SECRET };
+  const connection = { host: HOST, port: PORT };
+
   const [ client, readline, handlers ] = clientHandler(
-    createConnection({ port: PORT }),
-    createInterface({ input: process.stdin }),
-    { name, secret }
-  )
+    net.createConnection(connection),
+    rl.createInterface(input),
+    config
+  );
 
-  // Register client listeners
+  const { open, close, error, read, write } = handlers;
+
   client
-    .on('connect', handlers.connect)
-    .on('data', handlers.message)
-    .on('end', handlers.disconnect);
+    .on('connect', open)
+    .on('data', read)
+    .on('error', error)
+    .on('end', close);
 
-  // Register interface listeners
-  readline.on('line', handlers.input);
+  readline.on('line', write);
 }
 
 export { app };
