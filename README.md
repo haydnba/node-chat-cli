@@ -13,13 +13,21 @@
 
 - `npm run build` to output the dist to `/bin`
 - `chmod u+x ./bin/cli.js` to own the executable
-- Host sever with `./bin/cli.js host <port?> <max-listeners?>` (port defaults to 8000; max-listeners to ∞)
-- Open client connection with `./bin/cli.js open <port? or host?>` (port defaults to 8000; hostname to 'localhost')
-- Client application expects `USER_NAME` and `SECRET` envs e.g.
+- Host sever with `./bin/cli.js host <port?> <max-listeners?>` (port defaults to
+8000; max-listeners to ∞) e.g.
+```bash
+./bin/cli.js host 5678
+```
+- Open client connection with `./bin/cli.js open <port? | host?>` (port defaults
+to 8000; hostname to 'localhost'); application expects `USER_NAME` and `SECRET`
+envs e.g.
 ```bash
 export USER_NAME=my-user-name SECRET=shared-secret-key && ./bin/cli.js open 5678
 ```
-
+- Expose server instance on the network with ngrok e.g.
+```bash
+ngrok tcp <port> # tcp://<ngrok-host>:<ngrok-port> -> localhost:<port>
+```
 
 #### Features:
 - messages encrypted on the client and broadcast by server

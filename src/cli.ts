@@ -2,6 +2,8 @@
 
 import assert from 'assert/strict';
 
+const pathMap = { open: "./client", host: "./server" } as const;
+
 const [ COMMAND, ...rest ] = process.argv.splice(2);
 
 try {
@@ -16,18 +18,6 @@ try {
       - "open <options>" // Open a client connection
     `
   );
-
-  const pathMap = {
-    /**
-     *
-     */
-    open: "./client",
-
-    /**
-     *
-     */
-    host: "./server",
-  } as const;
 
   import(pathMap[COMMAND]).then((module) => module.app(...rest));
 
