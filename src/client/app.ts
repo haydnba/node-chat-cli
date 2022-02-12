@@ -10,14 +10,14 @@ const { env: { USER_NAME, SECRET }, stdin } = process;
  * @param HOST
  * @param PORT
  */
-function app (HOST = 'localhost', PORT = 8000): void {
+function app (HOSTNAME = 'localhost', PORT = 8000): void {
 
   assert.strictEqual(typeof SECRET === 'string', true);
   assert.strictEqual(typeof USER_NAME === 'string', true);
 
   const input = { input: stdin };
   const config = { username: USER_NAME, secret: SECRET };
-  const connection = { host: HOST, port: PORT };
+  const connection = { host: HOSTNAME, port: PORT };
 
   const [ client, readline, handlers ] = clientHandler(
     net.createConnection(connection),
