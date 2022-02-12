@@ -11,10 +11,9 @@ try {
     `
       Valid commands:
 
+      - "host <options>" // Invoke the chat server
 
-      - "host <port?> <max-listeners?>" // Invoke the chat server
-
-      - "open <port?> <host?>" // Open a chat client
+      - "open <options>" // Open a client connection
     `
   );
 
