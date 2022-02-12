@@ -1,9 +1,8 @@
 {
-  "name": "silly-chat",
-  "version": "1.0.0",
+  "name": "silly",
+  "version": "0.0.1",
   "description": "simple command-line chat with encryption",
-  "main": "bin/cli.js",
-  "bin": "bin/cli.js",
+  "bin": "dist/cli.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,10 +13,6 @@
   },
   "author": "Haydn Appleby",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/haydnba/node-chat-cli/issues"
-  },
-  "homepage": "https://github.com/haydnba/node-chat-cli#readme",
   "devDependencies": {
     "@types/node": "^17.0.15",
     "typescript": "^4.5.5"
