@@ -1,7 +1,5 @@
 import * as net from 'net';
-import { EventEmitter } from 'stream';
-
-type SocketManager = (bus: EventEmitter) => (socket: net.Socket) => void;
+import { SocketManager } from '@shared/types';
 
 const socketManager: SocketManager = bus => socket => {
   // Initialisation flag.
