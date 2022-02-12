@@ -10,8 +10,16 @@
 - `events` for event bus managing socket connections
 
 #### Usage:
-- Serve with `node server/app.mjs` (port defaults to 8000)
-- Connect with `node client/app.mjs <your username> <your secret> <port>`
+
+- `npm run build` to output the dist to `/bin`
+- `chmod u+x ./bin/cli.js` to own the executable
+- Host sever with `./bin/cli.js host <port?> <max-listeners?>` (port defaults to 8000; max-listeners to ∞)
+- Open client connection with `./bin/cli.js open <port? or host?>` (port defaults to 8000; hostname to 'localhost')
+- Client application expects `USER_NAME` and `SECRET` envs e.g.
+```bash
+export USER_NAME=my-user-name SECRET=shared-secret-key && ./bin/cli.js open 5678
+```
+
 
 #### Features:
 - messages encrypted on the client and broadcast by server
