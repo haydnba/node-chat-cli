@@ -7,10 +7,10 @@ const { env: { USERNAME, SECRET }, stdin } = process;
 
 /**
  * TODO
- * @param HOST
  * @param PORT
+ * @param HOSTNAME
  */
-function app (HOSTNAME = 'localhost', PORT = 8000): void {
+function app (PORT = 8000, HOSTNAME = 'localhost'): void {
 
   assert.strictEqual(typeof SECRET === 'string', true);
   assert.strictEqual(typeof USERNAME === 'string', true);
