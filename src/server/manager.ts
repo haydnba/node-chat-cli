@@ -2,6 +2,14 @@ import * as net from 'net';
 import { SocketManager } from '@shared/types';
 
 const socketManager: SocketManager = bus => socket => {
+  const [ max, current ] = [
+    bus.getMaxListeners(),
+    bus.listenerCount('message')
+  ];
+
+  // If max listeners are already registered on the bus, kill socket.
+  if (max === current) return socket.destroy();
+
   // Initialisation flag.
   let registered = false;
 
