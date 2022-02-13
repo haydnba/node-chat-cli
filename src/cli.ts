@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --trace-warnings
 
 import assert from 'assert/strict';
 import { app as open } from './client';
