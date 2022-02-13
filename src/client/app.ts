@@ -1,22 +1,22 @@
 import assert from 'assert/strict';
 import * as net from 'net';
 import * as rl from 'readline';
-import { clientHandler } from '.';
+import { clientHandler } from './handler';
 
-const { env: { USER_NAME, SECRET }, stdin } = process;
+const { env: { USERNAME, SECRET }, stdin } = process;
 
 /**
  * TODO
- * @param HOST
  * @param PORT
+ * @param HOSTNAME
  */
-function app (HOSTNAME = 'localhost', PORT = 8000): void {
+function app (PORT = 8000, HOSTNAME = 'localhost'): void {
 
   assert.strictEqual(typeof SECRET === 'string', true);
-  assert.strictEqual(typeof USER_NAME === 'string', true);
+  assert.strictEqual(typeof USERNAME === 'string', true);
 
   const input = { input: stdin };
-  const config = { username: USER_NAME, secret: SECRET };
+  const config = { username: USERNAME, secret: SECRET };
   const connection = { host: HOSTNAME, port: PORT };
 
   const [ client, readline, handlers ] = clientHandler(

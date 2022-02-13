@@ -6,10 +6,11 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "bin",
+    "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "*": ["node_modules/*", "src/types/*"],
+      "@shared/*": ["src/shared/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

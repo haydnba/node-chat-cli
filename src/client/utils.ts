@@ -1,5 +1,5 @@
 import { createCipheriv, createDecipheriv, scrypt } from 'crypto';
-import { Cipherer, KeyGen } from './types';
+import { Cipherer, KeyGen } from '@shared/types';
 
 const ALGORITHM = 'aes-192-cbc';
 const SALT = Buffer.alloc(16, 0);

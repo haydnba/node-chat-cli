@@ -1,5 +1,7 @@
 import { enc, dec, key } from './utils';
-import { ClientHandler, Message } from './types';
+import { ClientHandler, Message } from '@shared/types';
+
+const { exit, stderr, stdout } = process;
 
 const clientHandler: ClientHandler = (client, input, config) => {
   // Extract the user data.
@@ -17,7 +19,7 @@ const clientHandler: ClientHandler = (client, input, config) => {
 
       client.write(JSON.stringify({ username, ts: Date.now() }));
     } catch {
-      process.stdout.write('initialisation failed');
+      stdout.write('initialisation failed');
     }
   }
 
@@ -25,16 +27,16 @@ const clientHandler: ClientHandler = (client, input, config) => {
    * Output a disconnection message and exit.
    */
   function close (): void {
-    process.stdout.write('disconnected from server');
-    process.exit(1);
+    stdout.write('disconnected from server');
+    exit(1);
   }
 
   /**
    * Log message to standard error and exit.
    */
   function error (err: Error): void {
-    process.stderr.write('connection error: ' + err.message);
-    process.exit(1);
+    stderr.write('connection error: ' + err.message);
+    exit(1);
   }
 
   /**
@@ -48,7 +50,7 @@ const clientHandler: ClientHandler = (client, input, config) => {
 
       client.write(enc(derivedKey, JSON.stringify(message)));
     } catch {
-      process.stdout.write('message sending failed');
+      stdout.write('message sending failed');
     }
   }
 
@@ -60,7 +62,7 @@ const clientHandler: ClientHandler = (client, input, config) => {
       const message: string = dec(derivedKey, data.toString('utf8'));
       const { username, line, ts }: Message = JSON.parse(message);
 
-      process.stdout.write(
+      stdout.write(
         `[${username} - ${new Date(ts).toLocaleTimeString()}]: ${line}\n`
       );
     } catch {
