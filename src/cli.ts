@@ -9,13 +9,13 @@ const help = `
 
   Valid commands:
 
-  - "host <options>" // Invoke the chat server
-  - "open <options>" // Open a client connection
+  - "host <options>"    // Invoke the chat server
+  - "open <options>"    // Open a client connection
 
   Valid options:
 
-  - "host <port? or connections:port?>" // Optional, defaults: 8000, Infinity
-  - "open <port? or hostname:port?>"    // Optional, defaults: 8000, localhost
+  - "host <port? or connections:port?>"   // Optional, defaults: 8000, Infinity
+  - "open <port? or hostname:port?>"      // Optional, defaults: 8000, localhost
 
   Examples:
 
