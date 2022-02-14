@@ -28,7 +28,7 @@ const help = `
 const run = { open, host };
 
 try {
-  const [ COMMAND, ...args ] = process.argv.slice(2);
+  const [ COMMAND, OPTION ] = process.argv.slice(2);
 
   assert.strictEqual(
     ['open', 'host'].includes(COMMAND),
@@ -36,10 +36,7 @@ try {
     help,
   );
 
-  const options = args
-    .flatMap(transformOptions)
-    .map(castNumericIfValid)
-    .slice(0, 2);
+  const options = renderOpts(OPTION).map(castNumericIfValid)
 
   run[COMMAND](...options);
 
@@ -61,6 +58,6 @@ function castNumericIfValid (value: string): string | number {
  * Value of "a:b" returns ["b", "a"]
  * Value of "a:b:c:d" returns ["b", "a"]
  */
-function transformOptions (value: string): string[] {
+function renderOpts (value: string): string[] {
   return value.split(':').slice(0, 2).reverse();
 }
