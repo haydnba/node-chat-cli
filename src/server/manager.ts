@@ -40,15 +40,6 @@ function dispatch ({
   bus.emit('message', data, socket);
 }
 
-/**
- * Deregister the socket and broadcast notification.
- */
-function discard ({ bus }: { bus: EventEmitter}): void {
-  bus.off('message', broadcast);
-  bus.emit('message', 'user disconnected');
-  log({ message: 'user disconnected' });
-}
-
 
 const socketManager: SocketManager = bus => socket => {
   const [ max, current ] = [
@@ -79,16 +70,15 @@ const socketManager: SocketManager = bus => socket => {
   )
 
   const handleSocketEnd = () => {
-        bus.off('message', broadcast);
-    bus.emit('message', 'user disconnected');
-    log({ message: 'user disconnected' });
-
+    bus.off('message', handleMessageEvent);
+    bus.emit('message', 'user disconnect');
+    log({ message: 'user disconnect' });
   }
 
   socket
     .setEncoding('utf8')
     .on('data', handleSocketData)
-    .on('end', discard)
+    .on('end', handleSocketEnd)
     .on('error', log);
 
   bus.on('message', handleMessageEvent);
