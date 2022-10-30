@@ -1,5 +1,54 @@
 import * as net from 'net';
 import { SocketManager } from '@shared/types';
+import { EventEmitter } from 'stream';
+
+
+/**
+ * Log to the process console.
+ */
+function log ({ message }: { message: string }): void {
+  process.stdout.write('info: ' + message + '\n');
+}
+
+/**
+ * Relay the message to all registered sockets barring sender.
+ */
+function broadcast ({
+  socket,
+  message,
+  sender,
+} : {
+  socket: net.Socket,
+  message: Buffer,
+  sender: net.Socket,
+}): void {
+  sender === socket || socket.write(message);
+}
+
+/**
+ * Pass the message on to event bus for broadcast (handle initialisation).
+ */
+function dispatch ({
+  bus,
+  data,
+  socket,
+} :{
+  bus: EventEmitter,
+  data: Buffer,
+  socket: net.Socket,
+}): void {
+  bus.emit('message', data, socket);
+}
+
+/**
+ * Deregister the socket and broadcast notification.
+ */
+function discard ({ bus }: { bus: EventEmitter}): void {
+  bus.off('message', broadcast);
+  bus.emit('message', 'user disconnected');
+  log({ message: 'user disconnected' });
+}
+
 
 const socketManager: SocketManager = bus => socket => {
   const [ max, current ] = [
@@ -13,45 +62,39 @@ const socketManager: SocketManager = bus => socket => {
   // Initialisation flag.
   let registered = false;
 
+  const handleMessageEvent = (message: Buffer, sender: net.Socket) => (
+    broadcast({
+      socket,
+      message,
+      sender,
+    })
+  );
+
+  const handleSocketData = (data: Buffer) => (
+    registered ? dispatch({
+      bus,
+      data,
+      socket,
+    }) : registered = true
+  )
+
+  const handleSocketEnd = () => {
+        bus.off('message', broadcast);
+    bus.emit('message', 'user disconnected');
+    log({ message: 'user disconnected' });
+
+  }
+
   socket
     .setEncoding('utf8')
-    .on('data', dispatch)
+    .on('data', handleSocketData)
     .on('end', discard)
     .on('error', log);
 
-  bus.on('message', broadcast);
+  bus.on('message', handleMessageEvent);
 
   log({ message: 'new connection' });
 
-  /**
-   * Log to the process console.
-   */
-  function log ({ message }: { message: string }): void {
-    process.stdout.write('info: ' + message + '\n');
-  }
-
-  /**
-   * Relay the message to all registered sockets barring sender.
-   */
-  function broadcast (message: Buffer, sender: net.Socket): void {
-    sender === socket || socket.write(message);
-  }
-
-  /**
-   * Pass the message on to event bus for broadcast (handle initialisation).
-   */
-  function dispatch (data: Buffer): void {
-    registered ? bus.emit('message', data, socket) : registered = true;
-  }
-
-  /**
-   * Deregister the socket and broadcast notification.
-   */
-  function discard (): void {
-    bus.off('message', broadcast);
-    bus.emit('message', 'user disconnected');
-    log({ message: 'user disconnected' });
-  }
 }
 
 export { socketManager };
