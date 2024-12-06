@@ -1,26 +1,25 @@
-import * as net from 'net';
-import { SocketManager } from '@shared/types';
-import { EventEmitter } from 'stream';
-
+import * as net from "net";
+import { SocketManager } from "@shared/types";
+import { EventEmitter } from "stream";
 
 /**
- * Log to the process console.
+ * Log to the process console. skjdhfksjhlkgajhdflgkhj
  */
-function log ({ message }: { message: string }): void {
-  process.stdout.write('info: ' + message + '\n');
+function log({ message }: { message: string }): void {
+  process.stdout.write("info: " + message + "\n");
 }
 
 /**
  * Relay the message to all registered sockets barring sender.
  */
-function broadcast ({
+function broadcast({
   socket,
   message,
   sender,
-} : {
-  socket: net.Socket,
-  message: Buffer,
-  sender: net.Socket,
+}: {
+  socket: net.Socket;
+  message: Buffer;
+  sender: net.Socket;
 }): void {
   sender === socket || socket.write(message);
 }
@@ -28,24 +27,20 @@ function broadcast ({
 /**
  * Pass the message on to event bus for broadcast (handle initialisation).
  */
-function dispatch ({
+function dispatch({
   bus,
   data,
   socket,
-} :{
-  bus: EventEmitter,
-  data: Buffer,
-  socket: net.Socket,
+}: {
+  bus: EventEmitter;
+  data: Buffer;
+  socket: net.Socket;
 }): void {
-  bus.emit('message', data, socket);
+  bus.emit("message", data, socket);
 }
 
-
-const socketManager: SocketManager = bus => socket => {
-  const [ max, current ] = [
-    bus.getMaxListeners(),
-    bus.listenerCount('message')
-  ];
+const socketManager: SocketManager = (bus) => (socket) => {
+  const [max, current] = [bus.getMaxListeners(), bus.listenerCount("message")];
 
   // If max listeners are already registered on the bus, kill socket.
   if (max === current) return socket.destroy();
@@ -53,38 +48,37 @@ const socketManager: SocketManager = bus => socket => {
   // Initialisation flag.
   let registered = false;
 
-  const handleMessageEvent = (message: Buffer, sender: net.Socket) => (
+  const handleMessageEvent = (message: Buffer, sender: net.Socket) =>
     broadcast({
       socket,
       message,
       sender,
-    })
-  );
+    });
 
-  const handleSocketData = (data: Buffer) => (
-    registered ? dispatch({
-      bus,
-      data,
-      socket,
-    }) : registered = true
-  )
+  const handleSocketData = (data: Buffer) =>
+    registered
+      ? dispatch({
+          bus,
+          data,
+          socket,
+        })
+      : (registered = true);
 
   const handleSocketEnd = () => {
-    bus.off('message', handleMessageEvent);
-    bus.emit('message', 'user disconnect');
-    log({ message: 'user disconnect' });
-  }
+    bus.off("message", handleMessageEvent);
+    bus.emit("message", "user disconnect");
+    log({ message: "user disconnect" });
+  };
 
   socket
-    .setEncoding('utf8')
-    .on('data', handleSocketData)
-    .on('end', handleSocketEnd)
-    .on('error', log);
+    .setEncoding("utf8")
+    .on("data", handleSocketData)
+    .on("end", handleSocketEnd)
+    .on("error", log);
 
-  bus.on('message', handleMessageEvent);
+  bus.on("message", handleMessageEvent);
 
-  log({ message: 'new connection' });
-
-}
+  log({ message: "new connection" });
+};
 
 export { socketManager };
